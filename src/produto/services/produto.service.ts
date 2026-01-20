@@ -40,16 +40,14 @@ export class ProdutoService {
   }
 
   async create(produto: Produto): Promise<Produto> {
+    await this.CategoriaService.findById(produto.categoria.id);
     return this.produtoRepository.save(produto);
   }
 
   async update(produto: Produto): Promise<Produto> {
-    const produtoExistente = await this.findById(produto.id);
-
-    if (!produtoExistente) {
-      throw new HttpException('Produto não encontrado', HttpStatus.NOT_FOUND);
-    }
-    return this.produtoRepository.save(produto);
+    await this.findById(produto.id);
+    await this.CategoriaService.findById(produto.categoria.id);
+    return await this.produtoRepository.save(produto);
   }
 
   async delete(id: number): Promise<DeleteResult> {
